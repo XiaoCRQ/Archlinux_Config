@@ -2,8 +2,14 @@
 # Environment variables should be on top
 # Updated config.toml file can be found at $HOME/.local/share/hyde/config.toml
 
-[wallpaper]
-custom_paths = [
-    "$HOME/Pictures/Wallpapers",
-] # List of paths to search for wallpapers
+# [wallpaper]
+# custom_paths = [
+#     "$HOME/Pictures/Wallpapers",
+# ] # List of paths to search for wallpapers
 
+[wallpaper]
+backend = "mpvpaper"
+filetypes = [ "mp4", "mkv" ]
+custom_paths = [
+    "$HOME/Videos/Wallpapers",
+] # List of paths to search for wallpapers
