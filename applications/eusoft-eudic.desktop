@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=eudic
+Exec=env QT_SCREEN_SCALE_FACTORS=1.15 eusoft-eudic %F
+Icon=eusoft-eudic
+Comment=EUSOFT
+Terminal=false
+Categories=Dictionary;Education;
+X-AppImage-Version=13.5.2
