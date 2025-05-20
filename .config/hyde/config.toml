@@ -13,3 +13,6 @@ filetypes = [ "mp4", "mkv" ]
 custom_paths = [
     "$HOME/Videos/Wallpapers",
 ] # List of paths to search for wallpapers
+options = [
+    "--mpv-options", "osc=no"
+]
