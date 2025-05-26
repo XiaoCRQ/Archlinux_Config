@@ -34,7 +34,7 @@
 
 - 命令
 
-```text
+```bash
  cat /sys/firmware/efi/fw_platform_size
 ```
 
@@ -45,13 +45,13 @@
 
 - 使用 **网线/虚拟机(NAT模式)** 未自动连接下使用
 
-```text
+```bash
  ip link
 ```
 
 - 使用 **无线网卡**
 
-```text
+```bash
  iwctl // 进入网络管理
  station list // 列出网卡列表 [一般 wlan0 为主机无线网卡]
  station <网卡名> connect <wifi> // 连接网络
@@ -60,13 +60,13 @@
 
 - 测试 **连接**
 
-```text
+```bash
  ping bing.com
 ```
 
 - 设置时区
 
-```text
+```bash
  timedatectl set-timezone Asia/Shanghai
 ```
 
@@ -74,13 +74,13 @@
 
 - 查看分区和硬盘
 
-```text
+```bash
  fdisk -l
 ```
 
 - 创建分区
 
-```text
+```bash
 cfdisk /dev/<你的硬盘>
 ```
 
@@ -96,13 +96,13 @@ cfdisk /dev/<你的硬盘>
 
   - 格式化交换分区
 
-  ```text
+  ```bash
    mkswap /dev/<交换分区>
   ```
 
   - 格式化btrfs文件系统
 
-  ```text
+  ```bash
    mkfs.btrfs /dev/<root分区> -f
    mkfs.btrfs /dev/<home分区> -f
   ```
@@ -111,7 +111,7 @@ cfdisk /dev/<你的硬盘>
 
   - 挂载root
 
-  ```text
+  ```bash
    mount /dev/<root分区> /mnt
    btrfs subvolume create /mnt/@
    umount /mnt
@@ -120,14 +120,14 @@ cfdisk /dev/<你的硬盘>
 
   - 挂载home
 
-  ```text
+  ```bash
   mkdir /mnt/home
   mount -o noatime,compress=zstd /dev/<home分区> /mnt/home
   ```
 
   - 挂载efi和swap分区
 
-  ```text
+  ```bash
   mount /dev/<EFI分区> /mnt/boot/efi --mkdir
   swapon /dev/<swap分区>
   ```
@@ -145,7 +145,7 @@ cfdisk /dev/<你的硬盘>
 
 > 也可以通过以下指令下载中国境内的镜像源，再通过 **vim /etc/pacman.d/mirrorlist** 将需要的镜像源取消注释
 
-```text
+```bash
  curl -L 'https://ArchLinux.org/mirrorlist/?country=CN&protocol=https' -o /etc/pacman.d/mirrorlist
 ```
 
@@ -155,7 +155,7 @@ cfdisk /dev/<你的硬盘>
 
   - **vim /etc/pacman.conf** 在最后写下如下内容
 
-  ```text
+  ```bash
   [ArchLinuxcn]
   Server = https://mirrors.ustc.edu.cn/ArchLinuxcn/$Arch
   Server = https://mirrors.tuna.tsinghua.edu.cn/ArchLinuxcn/$Arch
@@ -165,13 +165,13 @@ cfdisk /dev/<你的硬盘>
 
 - 更新包管理器
 
-```text
+```bash
  pacman -Sy
 ```
 
 - 安装软件包
 
-```text
+```bash
   pacstrap -K /mnt base base-devel Linux-zen Linux-zen-headers Linux-firmware git fish grub efibootmgr os-prober openssl networkmanager dhcpcd neovim ntfs-3g intel-ucode bluez bluez-utils btrfs-progs
 ```
 
@@ -183,21 +183,21 @@ cfdisk /dev/<你的硬盘>
 
 - 挂载配置
 
-```text
+```bash
  genfstab -U /mnt >> /mnt/etc/fstab
  Arch-chroot /mnt
 ```
 
 - 时间配置
 
-```text
+```bash
  ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
  hwclock --systohc
 ```
 
 - 语言配置
 
-```text
+```bash
  nvim /etc/locale.gen
  取消en_US.UTF-8和zh_CN.UTF-8前的注释
  locale-gen
@@ -209,7 +209,7 @@ cfdisk /dev/<你的硬盘>
 
 - 网络配置
 
-```text
+```bash
  nvim /etc/hostname
  第一行写入你的<主机名称>，任意添(别太任意%……#@$@*&……)
  systemctl enable dhcpcd
@@ -218,7 +218,7 @@ cfdisk /dev/<你的硬盘>
 
 - Initramfs配置
 
-```text
+```bash
  nvim /etc/mkinitcpio.conf
  在HOOKS中加入btrfs
  mkinitcpio -P
@@ -226,7 +226,7 @@ cfdisk /dev/<你的硬盘>
 
 - Pacman配置
 
-```text
+```bash
  检查/etc/pacman.d/mirrorlist
  nvim /etc/pacman.conf
  取消Color和ParallelDownloads前的注释
@@ -238,21 +238,21 @@ cfdisk /dev/<你的硬盘>
 
   - 设置root密码
 
-  ```text
+  ```bash
    passwd
    <输入密码然后回车> [密码的输入是不会显示]
   ```
 
   - 添加用户
 
-  ```text
+  ```bash
    useradd -m -G wheel <用户名>
    passwd <用户名>
   ```
 
   - 为 **wheel** 组中的用户添加sudo权限 - 类似于windows下的管理员权限
 
-  ```text
+  ```bash
    nvim /etc/sudoers
    将 <Uncomment to allow members of group wheel to execute any command>** 下面一行的注释去除
    使用 :w! 强制写入
@@ -260,7 +260,7 @@ cfdisk /dev/<你的硬盘>
 
   - 设置用户shell
 
-  ```text
+  ```bash
    su <用户名>
    查找shell的位置
    whereis fish
@@ -275,14 +275,14 @@ cfdisk /dev/<你的硬盘>
 
   - UEFI 系统
 
-  ```text
+  ```bash
    sudo grub-install --target=x86_64-efi --efi-direcotry=/boot/efi --bootloader-id=GRUB
   ```
 
   - BIOS 系统
     > 要安装 **GRUB** 的硬盘(通常为efi分区存在的硬盘)
 
-  ```text
+  ```bash
    sudo grub-install --recheck /dev/<你efi分区的硬盘>
   ```
 
@@ -291,7 +291,7 @@ cfdisk /dev/<你的硬盘>
   - 启用双系统
     > 将最后一行的注释去掉，启用os-prober检测双系统
 
-  ```text
+  ```bash
    sudo nvim /etc/default/grub
   ```
 
@@ -301,13 +301,13 @@ cfdisk /dev/<你的硬盘>
     > 运行sudo os-prober看看能不能检测到windows
     > 未检测到windows重启进入系统再运行一遍即可
 
-  ```text
+  ```bash
    sudo grub-mkconfig -o /boot/grub/grub.cfg
   ```
 
 - 结束配置
 
-```text
+```bash
    Ctrl+D 退出登陆
    umount -R /mnt 取消挂载
    reboot 重启
@@ -319,7 +319,7 @@ cfdisk /dev/<你的硬盘>
 
   > 无线网卡
 
-  ```text
+  ```bash
    nmcli device wifi connect <网络名> --ask
    输入密码回车
   ```
@@ -349,112 +349,105 @@ cfdisk /dev/<你的硬盘>
 
   - terminal 终端模拟器
 
-  ```text
+  ```bash
    sudo pacman -S kitty
   ```
 
   - Btop 资源监视器
 
-  ```text
+  ```bash
    sudo pacman -S btop
   ```
 
   - Ranger 资源管理器
 
-  ```text
+  ```bash
    sudo pacman -S ranger
   ```
 
   - Rofi 搜索栏【需要桌面环境】
 
-  ```text
+  ```bash
    sudo pacman -S rofi
   ```
 
   - Speedtest 网速测试
 
-  ```text
+  ```bash
    sudo pacman -S speedtest-cli
   ```
 
   - Axel 下载工具
 
-  ```text
+  ```bash
    sudo pacman -S axel
   ```
 
   - Neofetch 系统基本信息
 
-  ```text
+  ```bash
    sudo pacman -S neofetch
   ```
 
   - Lsd 带图标的ls命令
 
-  ```text
+  ```bash
    sudo pacman -S lsd
   ```
 
   - Bat 替代cat的更好文件输出打印
 
-  ```text
+  ```bash
    sudo pacman -S bat
   ```
 
   - Zellij 终端平铺管理
 
-  ```text
+  ```bash
    sudo pacman -S zellij
   ```
 
   - Ffmpeg 媒体资源处理器/依赖项
 
-  ```text
+  ```bash
    sudo pacman -S ffmpeg
   ```
 
   - Ncdu 磁盘空间查看器
 
-  ```text
+  ```bash
    sudo pacman -S ncdu
   ```
 
   - Dust 形象显示磁盘占用
 
-  ```text
+  ```bash
    sudo pacman -S dust
   ```
 
   - Tldr 快速解释命令使用方法
 
-  ```text
+  ```bash
    sudo pacman -S ncdu
+  ```
+
+  - 计算器
+
+  ```bash
+   sudo pacman -S qalculate-gtk
   ```
 
   - hollywood 黑客装逼-没啥用
 
   - Fzf 文件查找
 
-  ```text
+  ```bash
    sudo pacman -S fzf
-  ```
-
-  - Powertop 电源管理
-
-  ```text
-   sudo pacman -S powertop
-  ```
-
-  - Pav 声音
-
-  ```text
-   sudo pacman -S pavucontrol-qt
-   pavucontrol-qt
   ```
 
   - 字体
 
-  ```text
+  ```bash
    sudo pacman -S ttf-jetbrains-mono-nerd adobe-source-han-sans-cn-fonts adobe-source-code-pro-fonts
   ```
 
@@ -464,7 +457,7 @@ cfdisk /dev/<你的硬盘>
 
     - 使用安装脚本 [来自HyDE](https://github.com/HyDE-Project/HyDE/tree/master)
 
-    ```text
+    ```bash
     git clone --depth 1 https://github.com/HyDE-Project/HyDE ~/HyDE
     cd ~/HyDE/Scripts
     ./install.sh
@@ -478,19 +471,19 @@ cfdisk /dev/<你的硬盘>
 
 - 安装桌面管理
 
-```text
+```bash
  sudo pacman -S sddm
 ```
 
 - 启动桌面管理
 
-```text
+```bash
  sudo systemctl enable sddm
 ```
 
 - 重启
 
-```text
+```bash
  reboot
 ```
 
@@ -498,13 +491,13 @@ cfdisk /dev/<你的硬盘>
 
   - 安装
 
-  ```text
+  ```bash
    sudo pacman -S fcitx5 fcitx5-chinese-addons fcitx5-configtool
   ```
 
   - 配置输入法
 
-  ```text
+  ```bash
    fcitx5-configtool
   ```
 
@@ -512,25 +505,21 @@ cfdisk /dev/<你的硬盘>
 
 - 下载配置文件
 
-  ```text
+  ```bash
    git clone https://github.com/XiaoCRQ/ArchLinux_Config
   ```
 
 - 导入配置
 
-  ```text
+  ```bash
   ./setup.sh
   ```
 
 - Neovim配置
 
-  ```text
+  ```bash
    git clone https://github.com/XiaoCRQ/WhimsVim_starter ~/.config/nvim
    rm -rf ~/.config/nvim/.git
-  ```
-
-  ```
-
   ```
 
 ## 其他配置
