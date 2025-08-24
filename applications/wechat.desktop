@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=wechat
 Name[zh_CN]=微信
-Exec=/opt/wechat/wechat  --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime  %U
+Exec=/opt/wechat/wechat %U
 StartupNotify=true
 Terminal=false
 Icon=/usr/share/icons/hicolor/256x256/apps/wechat.png

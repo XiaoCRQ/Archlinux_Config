@@ -1,6 +1,8 @@
 [Hotkey]
 # 反复按切换键时进行轮换
 EnumerateWithTriggerKeys=True
+# 临时在当前和第一个输入法之间切换
+AltTriggerKeys=
 # 向前切换输入法
 EnumerateForwardKeys=
 # 向后切换输入法
@@ -12,11 +14,6 @@ ModifierOnlyKeyTimeout=250
 
 [Hotkey/TriggerKeys]
 0=Shift+Shift_L
-1=Zenkaku_Hankaku
-2=Hangul
-
-[Hotkey/AltTriggerKeys]
-0=Alt+Shift+Alt_L
 
 [Hotkey/EnumerateGroupForwardKeys]
 0=Super+space

@@ -1,7 +1,17 @@
+function fish_prompt -d "Write out the prompt"
+    # This shows up as USER@HOST /home/user/ >, with the directory colored
+    # $USER and $hostname are set by fish, so you can just use them
+    # instead of using `whoami` and `hostname`
+    printf '%s@%s %s%s%s > ' $USER $hostname \
+        (set_color $fish_color_cwd) (prompt_pwd) (set_color normal)
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
+    set fish_greeting
+
 end
-# ~/.config/fish/config.fish
+
 fish_vi_key_bindings
 function fish_user_key_bindings
     # 在 insert 模式下绑定 'jk' 到 escape
@@ -12,20 +22,18 @@ function fish_user_key_bindings
     # 在正常模式下，使用 p 从系统剪贴板粘贴
     bind -M default p fish_clipboard_paste
 end
-# Emulates vim's cursor shape behavior
-#$fish_vi_force_cursor
-# Set the normal and visual mode cursors to a block
-set fish_cursor_default block
-# Set the insert mode cursor to a line
-set fish_cursor_insert line
-# Set the replace mode cursors to an underscore
-set fish_cursor_replace_one underscore
-set fish_cursor_replace underscore
-# Set the external cursor to a line. The external cursor appears when a command is started.
-# The cursor shape takes the value of fish_cursor_default when fish_cursor_external is not specified.
-set fish_cursor_external line
-# The following variable can be used to configure cursor shape in
-# visual mode, but due to fish_cursor_default, is redundant here
-set fish_cursor_visual block
-zoxide init fish | source
+
 starship init fish | source
+if test -f ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+    cat ~/.local/state/quickshell/user/generated/terminal/sequences.txt
+end
+
+alias pamcan pacman
+alias ls 'eza --icons'
+alias clear "printf '\033[2J\033[3J\033[1;1H'"
+alias q 'qs -c ii'
+
+# function fish_prompt
+#   set_color cyan; echo (pwd)
+#   set_color green; echo '> '
+# end

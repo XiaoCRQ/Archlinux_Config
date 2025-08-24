@@ -1,18 +1,13 @@
-$text_color = rgba(ffdbceFF)
-$entry_background_color = rgba(370e0011)
-$entry_border_color = rgba(a08d8655)
-$entry_color = rgba(ffdbceFF)
-$font_family = Rubik
-$font_family_clock = Space Grotesk DemiBold
+$text_color = rgba(FFDAD6FF)
+$entry_background_color = rgba(41000311)
+$entry_border_color = rgba(896E6C55)
+$entry_color = rgba(FFDAD6FF)
+$font_family = Rubik Light
+$font_family_clock = Rubik Light
 $font_material_symbols = Material Symbols Rounded
 
 background {
     color = rgba(181818FF)
-    
-    path = /home/xiaocrq/Pictures/Wallpapers/eva.png
-    blur_size = 15
-    blur_passes = 4
-    brightness = 0.33
 }
 input-field {
     monitor =
