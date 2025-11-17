@@ -14,13 +14,13 @@ listener {
     on-timeout = loginctl lock-session
 }
 
-# listener {
-#     timeout = 600 # 10mins
-#     on-timeout = hyprctl dispatch dpms off
-#     on-resume = hyprctl dispatch dpms on
-# }
-#
-# listener {
-#     timeout = 900 # 15mins
-#     on-timeout = $suspend_cmd
-# }
+listener {
+    timeout = 600 # 10mins
+    on-timeout = hyprctl dispatch dpms off
+    on-resume = hyprctl dispatch dpms on
+}
+
+listener {
+    timeout = 900 # 15mins
+    on-timeout = $suspend_cmd
+}
