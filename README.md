@@ -455,15 +455,11 @@ cfdisk /dev/<你的硬盘>
 
   - Hyprland
 
-    - 使用安装脚本 [来自HyDE](https://github.com/HyDE-Project/HyDE/tree/master)
+    - 使用安装脚本 [来自End-4](https://github.com/end-4/dots-hyprland)
 
     ```bash
-    git clone --depth 1 https://github.com/HyDE-Project/HyDE ~/HyDE
-    cd ~/HyDE/Scripts
-    ./install.sh
+    bash <(curl -s https://ii.clsty.link/get)
     ```
-
-  - Kde
 
 - 配置桌面环境
 
