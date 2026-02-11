@@ -1,8 +1,8 @@
-# ArchLinux_config
+# ArchLinux_Config
 
-这是我的ArchLinux安装和配置文档
+这是我的 `ArchLinux` 配置仓库
 
-## **Arch Linux** 安装文档
+## ArchLinux 系统安装
 
 ### 准备工作
 
@@ -28,20 +28,9 @@
     > ls /sys/firmware/efi/efivars
     > 报错/文件不存在/文件为空 则不是UEFI启动
 
-### 开始安装
+- 启动 `虚拟机` / `刻录好的U盘`
 
-#### 1. 检查是否符合UEFI64模式
-
-- 命令
-
-```bash
- cat /sys/firmware/efi/fw_platform_size
-```
-
-- 相关文档
-  > 如果命令结果为 64，则系统是以 UEFI 模式引导且使用 64 位 x64 UEFI。如果命令结果为 32，则系统是以 UEFI 模式引导且使用 32 位 IA32 UEFI，虽然其受支持，但引导加载程序只能使用 systemd-boot和GRUB。如果文件不存在，则系统可能是以BIOS模式（或 CSM 模式）引导。如果系统没有以您想要的模式（UEFI 或 BIOS）引导启动，请您参考自己的计算机或主板说明书。
-
-#### 2. 连接网络
+### 连接网络
 
 - 使用 **网线/虚拟机(NAT模式)** 未自动连接下使用
 
@@ -70,7 +59,7 @@
  timedatectl set-timezone Asia/Shanghai
 ```
 
-#### 3. 分区管理
+### 分区管理
 
 - 查看分区和硬盘
 
@@ -80,18 +69,16 @@
 
 - 创建分区
 
+> 根据需求分区
+> 划分 `swap` 分区以及 `linuxfile` 分区
+
 ```bash
 cfdisk /dev/<你的硬盘>
 ```
 
-![image](https://raw.githubusercontent.com/xiaoCRQ/ArchLinux_config/main/img/cfdisk.png)
-
-> 按需要分区
-> ![image](https://raw.githubusercontent.com/xiaoCRQ/ArchLinux_config/main/img/wiki_disk.png)
-
 - 格式化分区
 
-  > 如果你为Arch准备了单独的EFI分区
+  > 如果你为Arch准备了单独的EFI分区 (双系统无需处理)
   > mkfs.fat -F 32 /dev/efi_system_partition
 
   - 格式化交换分区
@@ -103,8 +90,7 @@ cfdisk /dev/<你的硬盘>
   - 格式化btrfs文件系统
 
   ```bash
-   mkfs.btrfs /dev/<root分区> -f
-   mkfs.btrfs /dev/<home分区> -f
+   mkfs.btrfs /dev/<文件分区> -f
   ```
 
 - 挂载分区
@@ -119,6 +105,7 @@ cfdisk /dev/<你的硬盘>
   ```
 
   - 挂载home
+  > 若事先准备了 `home` 分区
 
   ```bash
   mkdir /mnt/home
@@ -132,7 +119,7 @@ cfdisk /dev/<你的硬盘>
   swapon /dev/<swap分区>
   ```
 
-#### 4. 安装 **Arch Linux**
+### 安装基础软件
 
 - 选择镜像站
 
@@ -144,29 +131,16 @@ cfdisk /dev/<你的硬盘>
 ```
 
 > 也可以通过以下指令下载中国境内的镜像源，再通过 **vim /etc/pacman.d/mirrorlist** 将需要的镜像源取消注释
+> 缺点是原来的镜像源会被覆盖
 
 ```bash
  curl -L 'https://ArchLinux.org/mirrorlist/?country=CN&protocol=https' -o /etc/pacman.d/mirrorlist
 ```
 
-> 缺点是原来的镜像源会被覆盖
-
-- 配置国内镜像源 **AUR**
-
-  - **vim /etc/pacman.conf** 在最后写下如下内容
-
-  ```bash
-  [ArchLinuxcn]
-  Server = https://mirrors.ustc.edu.cn/ArchLinuxcn/$Arch
-  Server = https://mirrors.tuna.tsinghua.edu.cn/ArchLinuxcn/$Arch
-  Server = https://mirrors.hit.edu.cn/ArchLinuxcn/$Arch
-  Server = https://repo.huaweicloud.com/ArchLinuxcn/$Arch
-  ```
-
 - 更新包管理器
 
 ```bash
- pacman -Sy
+ pacman -Syu
 ```
 
 - 安装软件包
@@ -175,8 +149,8 @@ cfdisk /dev/<你的硬盘>
   pacstrap -K /mnt base base-devel Linux-zen Linux-zen-headers Linux-firmware git fish grub efibootmgr os-prober openssl networkmanager dhcpcd neovim ntfs-3g intel-ucode bluez bluez-utils btrfs-progs
 ```
 
-#### 5. **Arch Linux** 基础配置
-
+### 基础设置
+>
 > 使用 **nvim** 配置文件时
 > 可以使用 </> 键来查找要修改的代码
 > 可以使用 <n/N> 键来在搜索结果之间跳转
@@ -185,7 +159,7 @@ cfdisk /dev/<你的硬盘>
 
 ```bash
  genfstab -U /mnt >> /mnt/etc/fstab
- Arch-chroot /mnt
+ arch-chroot /mnt
 ```
 
 - 时间配置
@@ -211,7 +185,7 @@ cfdisk /dev/<你的硬盘>
 
 ```bash
  nvim /etc/hostname
- 第一行写入你的<主机名称>，任意添(别太任意%……#@$@*&……)
+ 第一行写入你的<主机名称>
  systemctl enable dhcpcd
  systemctl enable NetworkManager
 ```
@@ -220,7 +194,7 @@ cfdisk /dev/<你的硬盘>
 
 ```bash
  nvim /etc/mkinitcpio.conf
- 在HOOKS中加入btrfs
+ 在HOOKS的括号中添加btrfs
  mkinitcpio -P
 ```
 
@@ -231,7 +205,7 @@ cfdisk /dev/<你的硬盘>
  nvim /etc/pacman.conf
  取消Color和ParallelDownloads前的注释
  加上一行 ILoveCandy  吃豆人彩蛋
- pacman -Syy
+ pacman -Syu
 ```
 
 - 用户配置
@@ -250,7 +224,7 @@ cfdisk /dev/<你的硬盘>
    passwd <用户名>
   ```
 
-  - 为 **wheel** 组中的用户添加sudo权限 - 类似于windows下的管理员权限
+  - 为 `wheel` 组中的用户添加sudo权限 - 类似于windows下的管理员权限
 
   ```bash
    nvim /etc/sudoers
@@ -280,7 +254,8 @@ cfdisk /dev/<你的硬盘>
   ```
 
   - BIOS 系统
-    > 要安装 **GRUB** 的硬盘(通常为efi分区存在的硬盘)
+    > 当上条指令无法正常使用时启用
+    > 选择安装 **GRUB** 的硬盘(通常为efi分区存在的硬盘)
 
   ```bash
    sudo grub-install --recheck /dev/<你efi分区的硬盘>
@@ -297,7 +272,7 @@ cfdisk /dev/<你的硬盘>
 
   - 更新引导
 
-    > 如果之前为Arch创建了单独的EFI，那么现在将windows的EFI分区挂载到任意目录 例如(/mnt)
+    > 如果之前为Arch创建了单独的EFI，那么现在将Windows的EFI分区挂载到任意目录 例如(/mnt)
     > 运行sudo os-prober看看能不能检测到windows
     > 未检测到windows重启进入系统再运行一遍即可
 
@@ -305,7 +280,7 @@ cfdisk /dev/<你的硬盘>
    sudo grub-mkconfig -o /boot/grub/grub.cfg
   ```
 
-- 结束配置
+### 结束安装
 
 ```bash
    Ctrl+D 退出登陆
@@ -313,175 +288,106 @@ cfdisk /dev/<你的硬盘>
    reboot 重启
 ```
 
-#### 6. **Arch Linux** 安装软件
+## ArchLinux 系统配置
+>
+> 此处使用 [End-4](https://github.com/end-4/dots-hyprland) 的 `Hyprland` 配置作为默认配置
+
+### 准备工作
 
 - 连接互联网
 
-  > 无线网卡
+> 无线网卡
 
   ```bash
    nmcli device wifi connect <网络名> --ask
    输入密码回车
   ```
 
-- 安装 **Nvidia** 驱动
+- 开启代理
 
-  - Nvidia 的 [**wiki**](https://wiki.ArchLinuxcn.org/wiki/NVIDIA) 百科
-  - 也可参考下面的hyprland脚本
+  - 路由转发
+
+    - 使用移动设备开启热点并连接电脑
+    > 无无线网卡可用USB共享网络替代
+
+    - 移动设备打开代理软件
+       1. 设置代理端口 http / https
+       2. 打开来自局域网的连接
+
+    - 查询路由地址
+
+      ```bash
+      ip route show
+      显示类似于如下内容 其中 default via 后面的为路由地址
+      default via 192.168.2.1 dev wlo1 proto dhcp src 192.168.2.13 metric 600 
+      default via 192.168.2.1 dev wlo1 proto dhcp src 192.168.2.13 metric 3003 
+      192.168.2.0/24 dev wlo1 proto kernel scope link src 192.168.2.13 metric 600 
+      192.168.2.0/24 dev wlo1 proto dhcp scope link src 192.168.2.13 metric 3003 
+      ```
+
+    - 设置终端代理
+
+      ```bash
+      export http_proxy=http://路由地址:转发端口
+      export https_proxy=http://路由地址:转发端口
+      ```
+
+    - 检测链接
+
+      ```bash
+      ping bing.com
+      ping youtube.com
+      ```
 
 - 安装重点软件
 
-  - paru
+  - [yay](https://github.com/Jguer/yay)
 
   ```
-  sudo pacman-key --lsign-key "farseerfc@ArchLinux.org"
-  sudo pacman -S ArchLinuxcn-keyring
-  sudo pacman -S paru
+  git clone https://aur.archlinux.org/yay.git
+  cd yay
+  makepkg -si
   ```
 
-  - Clash-Verge-Rev-Docs
+  - [paru](https://github.com/Morganamilo/paru)
+
+  ```
+  git clone https://aur.archlinux.org/paru.git
+  cd paru
+  makepkg -si
+  ```
+
+  - [Clash-Verge-Rev](https://www.clashverge.dev/)
 
   ```
   paru -S clash-verge-rev-bin
   ```
 
-- 安装常用软件
+### 配置桌面
 
-  - terminal 终端模拟器
+- [Hyprland](https://hypr.land/) 安装
 
-  ```bash
-   sudo pacman -S kitty
-  ```
-
-  - Btop 资源监视器
-
-  ```bash
-   sudo pacman -S btop
-  ```
-
-  - Ranger 资源管理器
-
-  ```bash
-   sudo pacman -S ranger
-  ```
-
-  - Rofi 搜索栏【需要桌面环境】
-
-  ```bash
-   sudo pacman -S rofi
-  ```
-
-  - Speedtest 网速测试
-
-  ```bash
-   sudo pacman -S speedtest-cli
-  ```
-
-  - Axel 下载工具
-
-  ```bash
-   sudo pacman -S axel
-  ```
-
-  - Neofetch 系统基本信息
-
-  ```bash
-   sudo pacman -S neofetch
-  ```
-
-  - Lsd 带图标的ls命令
-
-  ```bash
-   sudo pacman -S lsd
-  ```
-
-  - Bat 替代cat的更好文件输出打印
-
-  ```bash
-   sudo pacman -S bat
-  ```
-
-  - Zellij 终端平铺管理
-
-  ```bash
-   sudo pacman -S zellij
-  ```
-
-  - Ffmpeg 媒体资源处理器/依赖项
-
-  ```bash
-   sudo pacman -S ffmpeg
-  ```
-
-  - Ncdu 磁盘空间查看器
-
-  ```bash
-   sudo pacman -S ncdu
-  ```
-
-  - Dust 形象显示磁盘占用
-
-  ```bash
-   sudo pacman -S dust
-  ```
-
-  - Tldr 快速解释命令使用方法
-
-  ```bash
-   sudo pacman -S ncdu
-  ```
-
-  - 计算器
-
-  ```bash
-   sudo pacman -S qalculate-gtk
-  ```
-
-  - hollywood 黑客装逼-没啥用
-
-  - Fzf 文件查找
-
-  ```bash
-   sudo pacman -S fzf
-  ```
-
-  - 字体
-
-  ```bash
-   sudo pacman -S ttf-jetbrains-mono-nerd adobe-source-han-sans-cn-fonts adobe-source-code-pro-fonts
-  ```
-
-- 安装桌面环境
-
-  - Hyprland
-
-    - 使用安装脚本 [来自End-4](https://github.com/end-4/dots-hyprland)
+  - 使用安装脚本 [来自End-4](https://github.com/end-4/dots-hyprland)
 
     ```bash
     bash <(curl -s https://ii.clsty.link/get)
     ```
 
-- 配置桌面环境
+- 复制配置
 
-  - Hyprland
+  - `hypr` + `kitty` + `fish`
 
-- 安装桌面管理
+    ```bash
+    ./config/setup.sh
+    ```
 
-```bash
- sudo pacman -S sddm
-```
-
-- 启动桌面管理
-
-```bash
- sudo systemctl enable sddm
-```
+  - [nvim](https://github.com/XiaoCRQ/WhimsVim)
+  > 需要安装 `chafa`
+  > 需要安装 [CascadiaCode](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/CascadiaCode.zip) 字体
 
 - 重启
 
-```bash
- reboot
-```
+### 配置软件
 
 - 安装输入法
 
@@ -497,27 +403,90 @@ cfdisk /dev/<你的硬盘>
    fcitx5-configtool
   ```
 
-#### 7. 配置软件
-
-- 下载配置文件
+- 安装常用软件
 
   ```bash
-   git clone https://github.com/XiaoCRQ/ArchLinux_Config
+  sudo pacman -S 软件
   ```
 
-- 导入配置
+  - QQ —— `linuxqq`
+  - Office —— `libreoffice-fresh libreoffice-fresh-zh-cn`
+  - 终端文件管理器 —— `yazi`
+  - 资源监视器 —— `btop`
+  - 文件查找 —— `fzf`
+  - ls升级 —— `lsd`
+  - 显示器配置 —— `nwg-displays`
+  - Neovide(nvim的gui渲染程序) —— `neovide`
+  - 浏览器 —— `zen-browser`
+
+### 配置登录界面
+
+#### sddm
 
   ```bash
-  ./setup.sh
+  sudo pacman -S sddm
+  sudo systemctl enable sddm
   ```
 
-- Neovim配置
+#### 无sddm (无缝启动)
 
-  ```bash
-   git clone https://github.com/XiaoCRQ/WhimsVim_starter ~/.config/nvim
-   rm -rf ~/.config/nvim/.git
-  ```
+##### 设置TTY1自动登录
 
-## 其他配置
+- 创建overrride
 
-- [Git使用指南](Git.md)
+```bash
+sudo nvim /etc/systemd/system/getty@tty1.service.d/override.conf
+```
+
+- 写入
+
+```bash
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin <你的用户名> --noclear %I $TERM
+```
+
+- 重载systemd
+
+```bash
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+```
+
+- 测试(可选)
+
+> 自动登录为成功
+
+```bash
+sudo systemctl restart getty@tty1
+```
+
+##### fish自动启动桌面
+
+- 编辑config.fish
+
+```bash
+nvim ~/.config/fish/config.fish
+```
+
+- 写入
+
+```bash
+if test -z "$WAYLAND_DISPLAY"; and test (tty) = "/dev/tty1"
+    exec start-hyprland
+end
+```
+
+##### Hyprland启动若显示需要输入用户密钥
+
+###### 设置keyring为空(安全性略低)
+
+安装seahorse,设置login的密钥为空即可
+
+##### 开机显示锁屏解锁界面
+
+在Hyprland的exec文件下写入
+
+```bash
+exec-once = bash -c "sleep 1 && loginctl lock-session"
+```
