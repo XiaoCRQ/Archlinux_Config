@@ -488,5 +488,5 @@ end
 在Hyprland的exec文件下写入
 
 ```bash
-exec-once = bash -c "sleep 1 && loginctl lock-session"
+exec-once = sleep 1 && loginctl lock-session
 ```
